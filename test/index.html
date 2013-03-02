@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Jasmine Test Runner</title>
+  <link rel="stylesheet" type="text/css" href="../vendor/jasmine/lib/jasmine-core/jasmine.css">
+  
+  <script src="../vendor/jasmine/lib/jasmine-core/jasmine.js"></script>
+  <script src="../vendor/jasmine/lib/jasmine-core/jasmine-html.js"></script>
+  <script src="../compiled/test/lib/jasmine-helpers.js"></script>
+
+  <!-- dependencies -->
+  <script src="../vendor/jquery/jquery.min.js"></script>
+  <script src="../vendor/hoodie/hoodie.js"></script>
+
+  <!-- base classes -->
+  <script src="../compiled/src/hoodie.admin.js"></script>
+  <script src="../compiled/src/hoodie.admin_config.js"></script>
+  <script src="../compiled/src/hoodie.admin_logs.js"></script>
+  <script src="../compiled/src/hoodie.admin_modules.js"></script>
+  <script src="../compiled/src/hoodie.admin_users.js"></script>
+  
+  <!-- specs -->
+  <script src="../compiled/test/specs/hoodie.admin.spec.js"></script>
+  
+</head>
+<body>
+  <script>
+    jas = jasmine.getEnv()
+    jas.addReporter(new jasmine.TrivialReporter()); 
+    jas.execute();
+  </script>
+</body>
+</html>

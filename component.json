@@ -1,0 +1,17 @@
+{
+  "name"        : "hoodie.admin",
+  "version"     : "0.1.0",
+  "main"        : ["./hoodie.admin.js"],
+  "dependencies": {
+    "jquery": "~1.9.1",
+    "hoodie": "*"
+  },
+  "ignore": [
+    "test/",
+    "src/",
+    "compiled/",
+    ".gitignore",
+    "Cakefile",
+    "TODO.md"
+  ]
+}
