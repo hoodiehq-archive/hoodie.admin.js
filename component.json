@@ -1,9 +1,8 @@
 {
   "name"        : "hoodie.admin",
-  "version"     : "0.1.0",
+  "version"     : "0.1.1",
   "main"        : ["./hoodie.admin.js"],
   "dependencies": {
-    "jquery": "~1.9.1",
     "hoodie": "*"
   },
   "ignore": [
