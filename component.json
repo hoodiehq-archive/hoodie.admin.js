@@ -10,6 +10,7 @@
     "src/",
     "compiled/",
     ".gitignore",
+    ".bowerrc",
     "Cakefile",
     "TODO.md"
   ]
