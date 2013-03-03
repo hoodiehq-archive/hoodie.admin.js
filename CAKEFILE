@@ -3,7 +3,7 @@ fs      = require 'fs'
 {spawn, exec} = require 'child_process'
 
 timeout = null
-build = (callback, watch = false) ->
+compile = (callback, watch = false) ->
   if watch
     coffee = spawn 'coffee', ['-c', '-b', '-o', 'compiled', '-w', '.']
   else
@@ -33,28 +33,12 @@ test = ->
   phantom.stdout.on 'data', (data) ->
     print data.toString()
 
-task 'compile', 'Build lib/', ->
-  build()
-
-task 'watch', 'Build lib/ and watch for changes', ->
-  build(null, true)
-  
-task 'test', 'Run all test', ->
-  build test
-    
-task 'autotest', 'Run all tests & rerun on file changes', ->
-  clearAndTest = -> 
-    clear()
-    test() 
-  
-  build clearAndTest, true
-  
-task 'build', 'build hoodie.admin.js', -> 
-  
+build = ->
   # the files need to be in a specific order, 
   # as some modules depend on others (e.g.
   # AccountRemote > Remote)
   files = """
+  src/hoodie.admin_account.coffee
   src/hoodie.admin_config.coffee
   src/hoodie.admin_logs.coffee
   src/hoodie.admin_modules.coffee
@@ -64,6 +48,29 @@ task 'build', 'build hoodie.admin.js', ->
   
   console.log "concatinating files ..."
   coffee = spawn 'coffee', ['-j', 'hoodie.admin.js', '-c', '-b'].concat(files)
-  coffee.on 'exit', (code) ->
-    console.log "minifying ..."
-    spawn 'uglifyjs', ['-o', 'hoodie.admin.min.js', 'hoodie.admin.js']
+  # coffee.on 'exit', (code) ->
+  #   console.log "minifying ..."
+  #   spawn 'uglifyjs', ['-o', 'hoodie.admin.min.js', 'hoodie.admin.js']
+  #   spawn 'uglifyjs', ['-o', 'hoodie.admin.min.js', 'hoodie.admin.js']
+
+task 'compile', 'Build lib/', ->
+  compile()
+
+task 'watch', 'Build lib/ and watch for changes', ->
+  compile(null, true)
+  
+task 'test', 'Run all test', ->
+  compile test
+    
+task 'autotest', 'Run all tests & rerun on file changes', ->
+  clearAndTest = -> 
+    clear()
+    test() 
+  
+  compile clearAndTest, true
+  
+task 'build', 'build hoodie.admin.js', -> 
+  build()
+
+task 'autobuild', 'rebuild hoodie.admin.js on change', ->
+  compile build, true

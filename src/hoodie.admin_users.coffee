@@ -10,6 +10,7 @@
 class Hoodie.AdminUsers extends Hoodie.Remote
 
   name   : '_users'
+  prefix : 'org.couchdb.user:'
 
   constructor: (hoodie, admin) ->
     @hoodie = hoodie
@@ -20,6 +21,11 @@ class Hoodie.AdminUsers extends Hoodie.Remote
     baseUrl = hoodie.baseUrl
     hash = "test-#{hoodie.uuid(5)}"
 
+    # HACK!
+    # we need to clear localStorage, otherwise signing up a new user
+    # will fail, as account username & ownerHash from last sign up
+    # might still be present
+    @hoodie.store.clear()
     testHoodieUser = new Hoodie baseUrl.replace(/\bapi\./, "#{hash}.api.")
     testHoodieUser.account.ownerHash = hash
 
@@ -50,7 +56,22 @@ class Hoodie.AdminUsers extends Hoodie.Remote
     .pipe(@_mapDocsFromFindAll).pipe(@parseAllFromRemote)
 
 
+  #
+  request : (type, path, options = {}) ->
+    path = "/#{encodeURIComponent @name}#{path}" if @name
+
+    options.contentType or= 'application/json'
+    if type is 'POST' or type is 'PUT'
+      options.dataType    or= 'json'
+      options.processData or= false
+      options.data = JSON.stringify options.data
+
+    @admin.request type, path, options
+
+
   # filter out non-user docs
   _mapDocsFromFindAll : (response) =>
     rows = response.rows.filter (row) -> /^org\.couchdb\.user:/.test row.id
     rows.map (row) -> row.doc
+
+  # _parseFromRemote : (object)

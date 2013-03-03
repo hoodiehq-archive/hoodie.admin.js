@@ -226,7 +226,7 @@ Hoodie.Account = (function() {
       return this.hoodie.defer().reject().promise();
     }
     promise = this._withSingleRequest('authenticate', function() {
-      return _this.hoodie.request('GET', "/_session");
+      return _this.request('GET', "/_session");
     });
     return promise.pipe(this._handleAuthenticateRequestSuccess, this._handleRequestError);
   };
@@ -264,7 +264,7 @@ Hoodie.Account = (function() {
       }),
       contentType: 'application/json'
     };
-    return this.hoodie.request('PUT', this._url(username), options).pipe(this._handleSignUpSucces(username, password), this._handleRequestError);
+    return this.request('PUT', this._url(username), options).pipe(this._handleSignUpSucces(username, password), this._handleRequestError);
   };
 
   Account.prototype.anonymousSignUp = function() {
@@ -345,6 +345,14 @@ Hoodie.Account = (function() {
     return (_ref = this.hoodie).trigger.apply(_ref, ["account:" + event].concat(__slice.call(parameters)));
   };
 
+  Account.prototype.request = function(type, path, options) {
+    var _ref;
+    if (options == null) {
+      options = {};
+    }
+    return (_ref = this.hoodie).request.apply(_ref, arguments);
+  };
+
   Account.prototype.db = function() {
     return "user/" + this.ownerHash;
   };
@@ -361,7 +369,7 @@ Hoodie.Account = (function() {
       }).promise();
     }
     return this._withSingleRequest('fetch', function() {
-      return _this.hoodie.request('GET', _this._url(username)).pipe(null, _this._handleRequestError).done(function(response) {
+      return _this.request('GET', _this._url(username)).pipe(null, _this._handleRequestError).done(function(response) {
         return _this._doc = response;
       });
     });
@@ -401,7 +409,7 @@ Hoodie.Account = (function() {
       contentType: "application/json"
     };
     return this._withPreviousRequestsAborted('resetPassword', function() {
-      return _this.hoodie.request('PUT', "/_users/" + (encodeURIComponent(key)), options).pipe(null, _this._handleRequestError).done(_this._checkPasswordResetStatus);
+      return _this.request('PUT', "/_users/" + (encodeURIComponent(key)), options).pipe(null, _this._handleRequestError).done(_this._checkPasswordResetStatus);
     });
   };
 
@@ -563,7 +571,7 @@ Hoodie.Account = (function() {
       }
     };
     return this._withPreviousRequestsAborted('passwordResetStatus', function() {
-      return _this.hoodie.request('GET', url, options).pipe(_this._handlePasswordResetStatusRequestSuccess, _this._handlePasswordResetStatusRequestError).fail(function(error) {
+      return _this.request('GET', url, options).pipe(_this._handlePasswordResetStatusRequestSuccess, _this._handlePasswordResetStatusRequestError).fail(function(error) {
         if (error.error === 'pending') {
           window.setTimeout(_this._checkPasswordResetStatus, 1000);
           return;
@@ -618,7 +626,7 @@ Hoodie.Account = (function() {
     this.hoodie.remote.disconnect();
     this._doc._deleted = true;
     return this._withPreviousRequestsAborted('updateUsersDoc', function() {
-      return _this.hoodie.request('PUT', _this._url(), {
+      return _this.request('PUT', _this._url(), {
         data: JSON.stringify(_this._doc),
         contentType: 'application/json'
       });
@@ -693,7 +701,7 @@ Hoodie.Account = (function() {
         contentType: 'application/json'
       };
       return _this._withPreviousRequestsAborted('updateUsersDoc', function() {
-        return _this.hoodie.request('PUT', _this._url(), options).pipe(_this._handleChangeUsernameAndPasswordRequest(newUsername, newPassword || currentPassword), _this._handleRequestError);
+        return _this.request('PUT', _this._url(), options).pipe(_this._handleChangeUsernameAndPasswordRequest(newUsername, newPassword || currentPassword), _this._handleRequestError);
       });
     };
   };
@@ -731,7 +739,7 @@ Hoodie.Account = (function() {
   Account.prototype._sendSignOutRequest = function() {
     var _this = this;
     return this._withSingleRequest('signOut', function() {
-      return _this.hoodie.request('DELETE', '/_session').pipe(null, _this._handleRequestError);
+      return _this.request('DELETE', '/_session').pipe(null, _this._handleRequestError);
     });
   };
 
@@ -746,7 +754,7 @@ Hoodie.Account = (function() {
     };
     return this._withPreviousRequestsAborted('signIn', function() {
       var promise;
-      promise = _this.hoodie.request('POST', '/_session', requestOptions);
+      promise = _this.request('POST', '/_session', requestOptions);
       return promise.pipe(_this._handleSignInSuccess(options), _this._handleRequestError);
     });
   };
@@ -1102,7 +1110,6 @@ Hoodie.Remote = (function(_super) {
     this.connect = __bind(this.connect, this);
     if (options.name != null) {
       this.name = options.name;
-      this.prefix = this.name;
     }
     if (options.prefix != null) {
       this.prefix = options.prefix;
@@ -1146,12 +1153,16 @@ Hoodie.Remote = (function(_super) {
     if (this.hoodie.isPromise(defer)) {
       return defer;
     }
-    path = "/" + encodeURIComponent("" + type + "/" + id);
+    path = "" + type + "/" + id;
+    if (this.prefix) {
+      path = this.prefix + path;
+    }
+    path = "/" + encodeURIComponent(path);
     return this.request("GET", path).pipe(this._parseFromRemote);
   };
 
   Remote.prototype.findAll = function(type) {
-    var defer, keyPrefix, path;
+    var defer, endkey, path, startkey;
     defer = Remote.__super__.findAll.apply(this, arguments);
     if (this.hoodie.isPromise(defer)) {
       return defer;
@@ -1159,19 +1170,24 @@ Hoodie.Remote = (function(_super) {
     path = "/_all_docs?include_docs=true";
     switch (true) {
       case (type != null) && this.prefix !== '':
-        keyPrefix = "" + this.prefix + "/" + type;
+        startkey = "" + this.prefix + type + "/";
         break;
       case type != null:
-        keyPrefix = type;
+        startkey = "" + type + "/";
         break;
       case this.prefix !== '':
-        keyPrefix = this.prefix;
+        startkey = this.prefix;
         break;
       default:
-        keyPrefix = '';
+        startkey = '';
     }
-    if (keyPrefix) {
-      path = "" + path + "&startkey=\"" + keyPrefix + "\/\"&endkey=\"" + keyPrefix + "0\"";
+    if (startkey) {
+      endkey = startkey.replace(/.$/, function(char) {
+        var charCode;
+        charCode = char.charCodeAt(0);
+        return String.fromCharCode(charCode + 1);
+      });
+      path = "" + path + "&startkey=\"" + startkey + "\"&endkey=\"" + endkey + "\"";
     }
     return this.request("GET", path).pipe(this._mapDocsFromFindAll).pipe(this._parseAllFromRemote);
   };
@@ -1285,45 +1301,45 @@ Hoodie.Remote = (function(_super) {
 
   Remote.prototype._validSpecialAttributes = ['_id', '_rev', '_deleted', '_revisions', '_attachments'];
 
-  Remote.prototype._parseForRemote = function(obj) {
-    var attr, attributes;
-    attributes = $.extend({}, obj);
-    for (attr in attributes) {
+  Remote.prototype._parseForRemote = function(object) {
+    var attr, properties;
+    properties = $.extend({}, object);
+    for (attr in properties) {
       if (~this._validSpecialAttributes.indexOf(attr)) {
         continue;
       }
       if (!/^_/.test(attr)) {
         continue;
       }
-      delete attributes[attr];
+      delete properties[attr];
     }
-    attributes._id = "" + attributes.type + "/" + attributes.id;
+    properties._id = "" + properties.type + "/" + properties.id;
     if (this.prefix) {
-      attributes._id = "" + this.prefix + "/" + attributes._id;
+      properties._id = "" + this.prefix + properties._id;
     }
-    delete attributes.id;
-    return attributes;
+    delete properties.id;
+    return properties;
   };
 
-  Remote.prototype._parseFromRemote = function(obj) {
+  Remote.prototype._parseFromRemote = function(object) {
     var id, _ref;
-    id = obj._id || obj.id;
-    delete obj._id;
+    id = object._id || object.id;
+    delete object._id;
     if (this.prefix) {
-      id = id.replace(RegExp('^' + this.prefix + '/'), '');
+      id = id.replace(RegExp('^' + this.prefix), '');
     }
-    _ref = id.split(/\//), obj.type = _ref[0], obj.id = _ref[1];
-    if (obj.createdAt) {
-      obj.createdAt = new Date(Date.parse(obj.createdAt));
+    _ref = id.split(/\//), object.type = _ref[0], object.id = _ref[1];
+    if (object.createdAt) {
+      object.createdAt = new Date(Date.parse(object.createdAt));
     }
-    if (obj.updatedAt) {
-      obj.updatedAt = new Date(Date.parse(obj.updatedAt));
+    if (object.updatedAt) {
+      object.updatedAt = new Date(Date.parse(object.updatedAt));
     }
-    if (obj.rev) {
-      obj._rev = obj.rev;
-      delete obj.rev;
+    if (object.rev) {
+      object._rev = object.rev;
+      delete object.rev;
     }
-    return obj;
+    return object;
   };
 
   Remote.prototype._parseAllFromRemote = function(objects) {
