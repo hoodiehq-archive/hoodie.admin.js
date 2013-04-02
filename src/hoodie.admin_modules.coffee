@@ -11,7 +11,10 @@ class Hoodie.AdminModules extends Hoodie.Remote
     super
 
 
-  find: (moduleName) =>
+  find: (type, moduleName) =>
+    # support both (id) and ('module', id)
+    moduleName = type unless moduleName
+
     if moduleName is 'module'
       debugger
 
@@ -20,6 +23,10 @@ class Hoodie.AdminModules extends Hoodie.Remote
 
   findAll: =>
     super 'module'
+
+  update : (moduleName, config) ->
+    debugger
+    super "module", moduleName, config
 
   getConfig : (moduleName) ->
     @hoodie.resolveWith

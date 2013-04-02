@@ -12,6 +12,7 @@ class Hoodie.Admin
 
     # init admin submodules
     @account = new Hoodie.AdminAccount @hoodie, this
+    @app     = new Hoodie.AdminApp     @hoodie, this
     @users   = new Hoodie.AdminUsers   @hoodie, this
     @config  = new Hoodie.AdminConfig  @hoodie, this
     @logs    = new Hoodie.AdminLogs    @hoodie, this

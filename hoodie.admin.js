@@ -87,6 +87,52 @@ Hoodie.AdminAccount = (function(_super) {
 
 })(Hoodie.Account);
 
+Hoodie.AdminApp = (function() {
+
+  function AdminApp(hoodie, admin) {
+    this.hoodie = hoodie;
+    this.admin = admin;
+  }
+
+  AdminApp.prototype.getInfo = function() {
+    var defer, info;
+    defer = this.hoodie.defer();
+    info = {
+      name: "minutes.io"
+    };
+    window.setTimeout(function() {
+      return defer.resolve(info);
+    });
+    return defer.promise();
+  };
+
+  AdminApp.prototype.getStats = function(since) {
+    var defer, key, stats;
+    defer = this.hoodie.defer();
+    stats = {
+      signups: 12,
+      account_deletions: 3,
+      users_active: 1302,
+      users_total: 4211,
+      growth: 0.04,
+      active: -0.02,
+      since: since
+    };
+    if (!since) {
+      for (key in stats) {
+        stats[key] = stats[key] * 17;
+      }
+    }
+    window.setTimeout(function() {
+      return defer.resolve(stats);
+    });
+    return defer.promise();
+  };
+
+  return AdminApp;
+
+})();
+
 Hoodie.AdminConfig = (function() {
 
   function AdminConfig(hoodie, admin) {
@@ -95,20 +141,18 @@ Hoodie.AdminConfig = (function() {
   }
 
   AdminConfig.prototype.get = function() {
-    return this.modules.find("appconfig").pipe(function(module) {
+    return this.admin.modules.find("appconfig").pipe(function(module) {
       return module.config;
     });
   };
 
   AdminConfig.prototype.set = function(config) {
-    var promise;
     if (config == null) {
       config = {};
     }
-    promise = this.modules.update("module", "appconfig", {
+    return this.admin.modules.update("appconfig", {
       config: config
     });
-    return promise;
   };
 
   return AdminConfig;
@@ -144,7 +188,10 @@ Hoodie.AdminModules = (function(_super) {
     AdminModules.__super__.constructor.apply(this, arguments);
   }
 
-  AdminModules.prototype.find = function(moduleName) {
+  AdminModules.prototype.find = function(type, moduleName) {
+    if (!moduleName) {
+      moduleName = type;
+    }
     if (moduleName === 'module') {
       debugger;
     }
@@ -153,6 +200,10 @@ Hoodie.AdminModules = (function(_super) {
 
   AdminModules.prototype.findAll = function() {
     return AdminModules.__super__.findAll.call(this, 'module');
+  };
+
+  AdminModules.prototype.update = function(moduleName, config) {
+    debugger;    return AdminModules.__super__.update.call(this, "module", moduleName, config);
   };
 
   AdminModules.prototype.getConfig = function(moduleName) {
@@ -207,7 +258,9 @@ Hoodie.AdminUsers = (function(_super) {
     if (!email) {
       email = "" + testHoodieUser.account.ownerHash + "@example.com";
     }
-    return testHoodieUser.account.signUp(email, 'secret');
+    return testHoodieUser.account.signUp(email, 'secret').then(function() {
+      return testHoodieUser.account.signOut();
+    });
   };
 
   AdminUsers.prototype.addTestUsers = function(nr) {
@@ -281,6 +334,7 @@ Hoodie.Admin = (function() {
   function Admin(hoodie) {
     this.hoodie = hoodie;
     this.account = new Hoodie.AdminAccount(this.hoodie, this);
+    this.app = new Hoodie.AdminApp(this.hoodie, this);
     this.users = new Hoodie.AdminUsers(this.hoodie, this);
     this.config = new Hoodie.AdminConfig(this.hoodie, this);
     this.logs = new Hoodie.AdminLogs(this.hoodie, this);

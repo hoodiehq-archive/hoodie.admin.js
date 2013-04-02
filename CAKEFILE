@@ -39,6 +39,7 @@ build = ->
   # AccountRemote > Remote)
   files = """
   src/hoodie.admin_account.coffee
+  src/hoodie.admin_app.coffee
   src/hoodie.admin_config.coffee
   src/hoodie.admin_logs.coffee
   src/hoodie.admin_modules.coffee

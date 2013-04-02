@@ -33,6 +33,8 @@ class Hoodie.AdminUsers extends Hoodie.Remote
       email = "#{testHoodieUser.account.ownerHash}@example.com"
 
     testHoodieUser.account.signUp( email, 'secret' )
+    .then ->
+      testHoodieUser.account.signOut()
 
   addTestUsers: ( nr = 1 ) ->
     timestamp = (new Date).getTime()
@@ -74,4 +76,3 @@ class Hoodie.AdminUsers extends Hoodie.Remote
     rows = response.rows.filter (row) -> /^org\.couchdb\.user:/.test row.id
     rows.map (row) -> row.doc
 
-  # _parseFromRemote : (object)
