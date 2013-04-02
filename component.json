@@ -3,7 +3,7 @@
   "version"     : "0.1.3",
   "main"        : ["./hoodie.admin.js"],
   "dependencies": {
-    "hoodie": "*"
+    "hoodie": "~0.1"
   },
   "ignore": [
     "test/",
