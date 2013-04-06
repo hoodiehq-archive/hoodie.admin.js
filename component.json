@@ -1,6 +1,6 @@
 {
   "name"        : "hoodie.admin",
-  "version"     : "0.1.3",
+  "version"     : "0.1.4",
   "main"        : ["./hoodie.admin.js"],
   "dependencies": {
     "hoodie": "~0.1"
