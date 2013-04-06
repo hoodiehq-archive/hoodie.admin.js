@@ -248,18 +248,23 @@ Hoodie.AdminUsers = (function(_super) {
     AdminUsers.__super__.constructor.apply(this, arguments);
   }
 
-  AdminUsers.prototype.addTestUser = function(email) {
-    var baseUrl, hash, testHoodieUser;
+  AdminUsers.prototype.addTestUser = function(options) {
+    var baseUrl, email, hash, testHoodieUser;
+    if (options == null) {
+      options = {};
+    }
     baseUrl = hoodie.baseUrl;
-    hash = "test-" + (hoodie.uuid(5));
+    hash = "test" + (hoodie.uuid(5));
     this.hoodie.store.clear();
     testHoodieUser = new Hoodie(baseUrl.replace(/\bapi\./, "" + hash + ".api."));
     testHoodieUser.account.ownerHash = hash;
-    if (!email) {
-      email = "" + testHoodieUser.account.ownerHash + "@example.com";
-    }
-    return testHoodieUser.account.signUp(email, 'secret').then(function() {
-      return testHoodieUser.account.signOut();
+    email = "" + testHoodieUser.account.ownerHash + "@example.com";
+    return testHoodieUser.account.signUp(email).then(function() {
+      if (!options.keepSignedIn) {
+        return testHoodieUser.account.signOut();
+      }
+    }).then(function() {
+      return testHoodieUser;
     });
   };
 
@@ -278,6 +283,25 @@ Hoodie.AdminUsers = (function(_super) {
       return _results;
     }).call(this);
     return $.when.apply($, promises);
+  };
+
+  AdminUsers.prototype.getTestUser = function() {
+    var _this = this;
+    return this.findAll('user').then(function(users) {
+      var user, userHoodie, username;
+      if (users.length) {
+        user = users[Math.floor(Math.random() * users.length)];
+        username = user.name.split(/\//).pop();
+        userHoodie = new Hoodie(hoodie.baseUrl.replace(/\bapi\./, "" + user.ownerHash + "-" + (hoodie.uuid(5)) + ".api."));
+        return userHoodie.account.signIn(username).then(function() {
+          return userHoodie;
+        });
+      } else {
+        return _this.addTestUser({
+          keepSignedIn: true
+        });
+      }
+    });
   };
 
   AdminUsers.prototype.removeAllTestUsers = function() {

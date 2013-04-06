@@ -17,9 +17,11 @@ class Hoodie.AdminUsers extends Hoodie.Remote
     @admin  = admin
     super
 
-  addTestUser: (email) ->
+  # 
+  # sign ups new user, and signs out directly after
+  addTestUser: (options = {}) ->
     baseUrl = hoodie.baseUrl
-    hash = "test-#{hoodie.uuid(5)}"
+    hash = "test#{hoodie.uuid(5)}"
 
     # HACK!
     # we need to clear localStorage, otherwise signing up a new user
@@ -28,20 +30,37 @@ class Hoodie.AdminUsers extends Hoodie.Remote
     @hoodie.store.clear()
     testHoodieUser = new Hoodie baseUrl.replace(/\bapi\./, "#{hash}.api.")
     testHoodieUser.account.ownerHash = hash
+    email = "#{testHoodieUser.account.ownerHash}@example.com"
 
-    unless email
-      email = "#{testHoodieUser.account.ownerHash}@example.com"
-
-    testHoodieUser.account.signUp( email, 'secret' )
+    testHoodieUser.account.signUp( email )
     .then ->
-      testHoodieUser.account.signOut()
+      testHoodieUser.account.signOut() unless options.keepSignedIn
+    .then ->
+      return testHoodieUser
 
+  # 
+  # signs up multiple users
   addTestUsers: ( nr = 1 ) ->
     timestamp = (new Date).getTime()
     promises = for i in [1..nr]
       @addTestUser()
 
     $.when promises...
+
+  # 
+  # gets a test user. If non exists yet, one gets created
+  getTestUser : ->
+    @findAll('user').then (users) =>
+      if users.length
+        # get random user
+        user = users[Math.floor(Math.random()*users.length)];
+        username = user.name.split(/\//).pop()
+        userHoodie = new Hoodie hoodie.baseUrl.replace(/\bapi\./, "#{user.ownerHash}-#{hoodie.uuid(5)}.api.")
+        userHoodie.account.signIn( username ).then -> return userHoodie
+      else
+        @addTestUser keepSignedIn : true
+
+
 
   removeAllTestUsers: ->
     @hoodie.rejectWith(error: "not yet implemented")
