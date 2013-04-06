@@ -9,6 +9,7 @@
 class Hoodie.Admin
 
   constructor: (@hoodie) ->
+    @baseUrl = @hoodie.baseUrl.replace /\bapi\./, 'admin.api.'
 
     # init admin submodules
     @account = new Hoodie.AdminAccount @hoodie, this
@@ -44,16 +45,25 @@ class Hoodie.Admin
   # so that interaction with hoodie.admin does not 
   # interfere with other hoodie.requests.
   request : (type, path, options = {}) ->
-    baseUrl = @hoodie.baseUrl.replace /\bapi\./, 'admin.api.'
 
     defaults =
       type        : type
-      url         : "#{baseUrl}#{path}"
+      url         : "#{@baseUrl}#{path}"
       xhrFields   : withCredentials: true
       crossDomain : true
       dataType    : 'json'
 
     $.ajax $.extend defaults, options
+
+
+  # Open store
+  # ------------
+
+  # same as hoodie.open, but as admin
+  #
+  open : (storeName, options = {}) ->
+    $.extend options, name: storeName, baseUrl : @baseUrl
+    new Hoodie.Remote this, options
 
 
   # authenticate

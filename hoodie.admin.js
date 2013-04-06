@@ -333,6 +333,7 @@ Hoodie.Admin = (function() {
 
   function Admin(hoodie) {
     this.hoodie = hoodie;
+    this.baseUrl = this.hoodie.baseUrl.replace(/\bapi\./, 'admin.api.');
     this.account = new Hoodie.AdminAccount(this.hoodie, this);
     this.app = new Hoodie.AdminApp(this.hoodie, this);
     this.users = new Hoodie.AdminUsers(this.hoodie, this);
@@ -353,14 +354,13 @@ Hoodie.Admin = (function() {
   };
 
   Admin.prototype.request = function(type, path, options) {
-    var baseUrl, defaults;
+    var defaults;
     if (options == null) {
       options = {};
     }
-    baseUrl = this.hoodie.baseUrl.replace(/\bapi\./, 'admin.api.');
     defaults = {
       type: type,
-      url: "" + baseUrl + path,
+      url: "" + this.baseUrl + path,
       xhrFields: {
         withCredentials: true
       },
@@ -368,6 +368,17 @@ Hoodie.Admin = (function() {
       dataType: 'json'
     };
     return $.ajax($.extend(defaults, options));
+  };
+
+  Admin.prototype.open = function(storeName, options) {
+    if (options == null) {
+      options = {};
+    }
+    $.extend(options, {
+      name: storeName,
+      baseUrl: this.baseUrl
+    });
+    return new Hoodie.Remote(this, options);
   };
 
   Admin.prototype.authenticate = function() {
