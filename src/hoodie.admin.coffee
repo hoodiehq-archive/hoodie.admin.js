@@ -63,7 +63,7 @@ class Hoodie.Admin
   #
   open : (storeName, options = {}) ->
     $.extend options, name: storeName, baseUrl : @baseUrl
-    new Hoodie.Remote this, options
+    new Hoodie.Remote @hoodie, options
 
 
   # authenticate

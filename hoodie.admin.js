@@ -378,7 +378,7 @@ Hoodie.Admin = (function() {
       name: storeName,
       baseUrl: this.baseUrl
     });
-    return new Hoodie.Remote(this, options);
+    return new Hoodie.Remote(this.hoodie, options);
   };
 
   Admin.prototype.authenticate = function() {
