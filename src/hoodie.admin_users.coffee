@@ -20,30 +20,24 @@ class Hoodie.AdminUsers extends Hoodie.Remote
   # 
   # sign ups new user, and signs out directly after
   addTestUser: (options = {}) ->
-    baseUrl = hoodie.baseUrl
-    hash = "test#{hoodie.uuid(5)}"
+    
+    hash  = "test#{hoodie.uuid(5)}"
+    email = "#{hash}@example.com" 
+    @_signUpUser(hash, email)
 
-    # HACK!
-    # we need to clear localStorage, otherwise signing up a new user
-    # will fail, as account username & ownerHash from last sign up
-    # might still be present
-    @hoodie.store.clear()
-    testHoodieUser = new Hoodie baseUrl.replace(/\bapi\./, "#{hash}.api.")
-    testHoodieUser.account.ownerHash = hash
-    email = "#{testHoodieUser.account.ownerHash}@example.com"
 
-    testHoodieUser.account.signUp( email )
-    .then ->
-      testHoodieUser.account.signOut() unless options.keepSignedIn
-    .then ->
-      return testHoodieUser
 
   # 
   # signs up multiple users
   addTestUsers: ( nr = 1 ) ->
     timestamp = (new Date).getTime()
-    promises = for i in [1..nr]
-      @addTestUser()
+    if nr > 10
+      @addTestUsers(10).then =>
+        nr -= 10
+        @addTestUsers(nr)
+    else
+      promises = for i in [1..nr]
+        @addTestUser()
 
     $.when promises...
 
@@ -95,3 +89,29 @@ class Hoodie.AdminUsers extends Hoodie.Remote
     rows = response.rows.filter (row) -> /^org\.couchdb\.user:/.test row.id
     rows.map (row) -> row.doc
 
+
+  # sign up user by PUTing a doc in _users
+  _signUpUser : (ownerHash, username, password = '') -> 
+    unless username
+      return @hoodie.defer().reject(error: 'username must be set').promise()
+
+    key = "user/#{username}"
+    db  = "user/#{ownerHash}"
+    now = new Date
+    id  = "org.couchdb.user:#{key}"
+    url = "/#{encodeURIComponent id}"
+
+    options =
+      data         :
+        _id        : id
+        name       : key
+        type       : 'user'
+        roles      : []
+        password   : password
+        ownerHash  : ownerHash
+        database   : db
+        updatedAt  : now
+        createdAt  : now
+        signedUpAt : now
+
+    @request('PUT', url, options)
