@@ -18,7 +18,7 @@ class Hoodie.AdminApp
 
     # dummy app info
     info =
-      name: "minutes.io"
+      name: "appName (not implemented yet)"
 
     window.setTimeout ->
       defer.resolve(info)

@@ -98,7 +98,7 @@ Hoodie.AdminApp = (function() {
     var defer, info;
     defer = this.hoodie.defer();
     info = {
-      name: "minutes.io"
+      name: "appName (not implemented yet)"
     };
     window.setTimeout(function() {
       return defer.resolve(info);
