@@ -429,9 +429,11 @@ Hoodie.Admin = (function() {
       options = {};
     }
     $.extend(options, {
-      name: storeName,
-      baseUrl: this.baseUrl
+      name: storeName
     });
+    if (this.baseUrl !== this.hoodie.baseUrl) {
+      options.baseUrl = this.baseUrl;
+    }
     return new Hoodie.Remote(this.hoodie, options);
   };
 

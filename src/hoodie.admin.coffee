@@ -62,7 +62,9 @@ class Hoodie.Admin
   # same as hoodie.open, but as admin
   #
   open : (storeName, options = {}) ->
-    $.extend options, name: storeName, baseUrl : @baseUrl
+    $.extend options, name: storeName
+
+    options.baseUrl = @baseUrl if @baseUrl isnt @hoodie.baseUrl
     new Hoodie.Remote @hoodie, options
 
 
