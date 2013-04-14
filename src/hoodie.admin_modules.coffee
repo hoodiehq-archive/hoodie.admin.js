@@ -15,9 +15,6 @@ class Hoodie.AdminModules extends Hoodie.Remote
     # support both (id) and ('module', id)
     moduleName = type unless moduleName
 
-    if moduleName is 'module'
-      debugger
-
     super "module", moduleName
 
 
@@ -25,7 +22,6 @@ class Hoodie.AdminModules extends Hoodie.Remote
     super 'module'
 
   update : (moduleName, config) ->
-    debugger
     super "module", moduleName, config
 
   getConfig : (moduleName) ->

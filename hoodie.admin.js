@@ -192,9 +192,6 @@ Hoodie.AdminModules = (function(_super) {
     if (!moduleName) {
       moduleName = type;
     }
-    if (moduleName === 'module') {
-      debugger;
-    }
     return AdminModules.__super__.find.call(this, "module", moduleName);
   };
 
@@ -203,7 +200,7 @@ Hoodie.AdminModules = (function(_super) {
   };
 
   AdminModules.prototype.update = function(moduleName, config) {
-    debugger;    return AdminModules.__super__.update.call(this, "module", moduleName, config);
+    return AdminModules.__super__.update.call(this, "module", moduleName, config);
   };
 
   AdminModules.prototype.getConfig = function(moduleName) {
