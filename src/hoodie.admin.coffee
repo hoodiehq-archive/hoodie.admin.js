@@ -12,12 +12,12 @@ class Hoodie.Admin
     @baseUrl = @hoodie.baseUrl.replace /\bapi\./, 'admin.api.'
 
     # init admin submodules
-    @account = new Hoodie.AdminAccount @hoodie, this
-    @app     = new Hoodie.AdminApp     @hoodie, this
-    @users   = new Hoodie.AdminUsers   @hoodie, this
-    @config  = new Hoodie.AdminConfig  @hoodie, this
-    @logs    = new Hoodie.AdminLogs    @hoodie, this
-    @modules = new Hoodie.AdminModules @hoodie, this
+    @account = new Hoodie.AdminAccount this
+    @app     = new Hoodie.AdminApp     this
+    @users   = new Hoodie.AdminUsers   this
+    @config  = new Hoodie.AdminConfig  this
+    @logs    = new Hoodie.AdminLogs    this
+    @modules = new Hoodie.AdminModules this
 
 
   # trigger

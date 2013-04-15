@@ -5,8 +5,9 @@
 class Hoodie.AdminAccount extends Hoodie.Account
 
   # 
-  constructor : (@hoodie, @admin) ->
-
+  constructor : (@admin) ->
+    @hoodie = @admin.hoodie
+    
     @username = 'admin'
     @_requests = {}
 

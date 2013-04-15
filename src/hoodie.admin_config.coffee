@@ -5,7 +5,8 @@
 class Hoodie.AdminConfig
 
   # 
-  constructor: (@hoodie, @admin) ->
+  constructor: (@admin) ->
+    @hoodie = @admin.hoodie
 
   get: ->
     @admin.modules.find("appconfig").pipe (module) -> module.config

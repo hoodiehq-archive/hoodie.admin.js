@@ -5,8 +5,8 @@
 # 
 class Hoodie.AdminApp
 
-  constructor: (@hoodie, @admin) ->
-    #
+  constructor : (@admin) ->
+    @hoodie = @admin.hoodie
 
   # getAppInfo
   # --------------

@@ -6,9 +6,9 @@ class Hoodie.AdminModules extends Hoodie.Remote
 
   name   : 'modules'
 
-  constructor: (@hoodie, @admin) ->
-    #
-    super
+  constructor: (@admin) ->
+    @hoodie = @admin.hoodie
+    super(@hoodie)
 
 
   find: (type, moduleName) =>

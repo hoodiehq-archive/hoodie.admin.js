@@ -4,7 +4,8 @@
 #
 class Hoodie.AdminLogs
 
-  constructor: (@hoodie, @admin) ->
+  constructor: (@admin) ->
+    @hoodie = @admin.hoodie
     #
 
   findAll : ->

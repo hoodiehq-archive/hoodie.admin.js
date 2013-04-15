@@ -12,20 +12,16 @@ class Hoodie.AdminUsers extends Hoodie.Remote
   name   : '_users'
   prefix : 'org.couchdb.user:'
 
-  constructor: (hoodie, admin) ->
-    @hoodie = hoodie
-    @admin  = admin
-    super
+  constructor: (@admin) ->
+    @hoodie = @admin.hoodie
+    super(@hoodie)
 
   # 
   # sign ups new user, and signs out directly after
   addTestUser: (options = {}) ->
-    
     hash  = "test#{hoodie.uuid(5)}"
     email = "#{hash}@example.com" 
     @_signUpUser(hash, email)
-
-
 
   # 
   # signs up multiple users
@@ -68,7 +64,9 @@ class Hoodie.AdminUsers extends Hoodie.Remote
     path = "#{path}&startkey=\"org.couchdb.user:user/#{query}\"&endkey=\"org.couchdb.user:user/#{query}|\""
 
     @request("GET", path)
-    .pipe(@_mapDocsFromFindAll).pipe(@parseAllFromRemote)
+    .pipe(@_mapDocsFromFindAll).pipe(@_parseAllFromRemote)
+
+
 
 
   #
@@ -115,3 +113,6 @@ class Hoodie.AdminUsers extends Hoodie.Remote
         signedUpAt : now
 
     @request('PUT', url, options)
+
+  _parseFromRemote : (object) =>
+    super
