@@ -113,6 +113,3 @@ class Hoodie.AdminUsers extends Hoodie.Remote
         signedUpAt : now
 
     @request('PUT', url, options)
-
-  _parseFromRemote : (object) =>
-    super

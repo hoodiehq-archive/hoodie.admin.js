@@ -38,3 +38,16 @@ class Hoodie.AdminModules extends Hoodie.Remote
 
   setConfig : (moduleName, config = {}) ->
     @hoodie.resolveWith(config)
+
+    
+  #
+  request : (type, path, options = {}) ->
+    path = "/#{encodeURIComponent @name}#{path}" if @name
+
+    options.contentType or= 'application/json'
+    if type is 'POST' or type is 'PUT'
+      options.dataType    or= 'json'
+      options.processData or= false
+      options.data = JSON.stringify options.data
+
+    @admin.request type, path, options

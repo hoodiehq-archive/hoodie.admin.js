@@ -227,6 +227,22 @@ Hoodie.AdminModules = (function(_super) {
     return this.hoodie.resolveWith(config);
   };
 
+  AdminModules.prototype.request = function(type, path, options) {
+    if (options == null) {
+      options = {};
+    }
+    if (this.name) {
+      path = "/" + (encodeURIComponent(this.name)) + path;
+    }
+    options.contentType || (options.contentType = 'application/json');
+    if (type === 'POST' || type === 'PUT') {
+      options.dataType || (options.dataType = 'json');
+      options.processData || (options.processData = false);
+      options.data = JSON.stringify(options.data);
+    }
+    return this.admin.request(type, path, options);
+  };
+
   return AdminModules;
 
 })(Hoodie.Remote);
@@ -241,7 +257,6 @@ Hoodie.AdminUsers = (function(_super) {
 
   function AdminUsers(admin) {
     this.admin = admin;
-    this._parseFromRemote = __bind(this._parseFromRemote, this);
     this._mapDocsFromFindAll = __bind(this._mapDocsFromFindAll, this);
     this.hoodie = this.admin.hoodie;
     AdminUsers.__super__.constructor.call(this, this.hoodie);
@@ -376,10 +391,6 @@ Hoodie.AdminUsers = (function(_super) {
       }
     };
     return this.request('PUT', url, options);
-  };
-
-  AdminUsers.prototype._parseFromRemote = function(object) {
-    return AdminUsers.__super__._parseFromRemote.apply(this, arguments);
   };
 
   return AdminUsers;
