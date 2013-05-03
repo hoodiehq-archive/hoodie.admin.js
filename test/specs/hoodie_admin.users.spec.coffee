@@ -1,11 +1,11 @@
-describe "Hoodie.AdminUsers", ->
+describe "HoodieAdmin.Users", ->
   beforeEach ->
-    @admin = new Mocks.Hoodie.Admin
-    @adminUsers = new Hoodie.AdminUsers @admin
+    @admin = new Mocks.HoodieAdmin
+    @adminUsers = new HoodieAdmin.Users @admin
 
   describe "constructor", ->
     it "should have some specs", ->
-      expect('Hoodie.AdminUsers').toBe 'tested'
+      expect('HoodieAdmin.Users').toBe 'tested'
   # /constructor
 
   describe "#search(query)", ->

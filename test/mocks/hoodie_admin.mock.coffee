@@ -6,7 +6,7 @@ promiseMock =
   done : ->
   then : ->
 
-Mocks.Hoodie.Admin = ->
+Mocks.HoodieAdmin = ->
 
   hoodie : 
     request : ->

@@ -1,13 +1,12 @@
-# Hoodie.AdminModules
+# HoodieAdmin.Modules
 # =====================
 
 #
-class Hoodie.AdminModules extends Hoodie.Remote
+class HoodieAdmin.Modules extends Hoodie.Remote
 
   name   : 'modules'
 
-  constructor: (@admin) ->
-    @hoodie = @admin.hoodie
+  constructor: (@hoodie) ->
     super(@hoodie)
 
 
@@ -50,4 +49,4 @@ class Hoodie.AdminModules extends Hoodie.Remote
       options.processData or= false
       options.data = JSON.stringify options.data
 
-    @admin.request type, path, options
+    @hoodie.request type, path, options

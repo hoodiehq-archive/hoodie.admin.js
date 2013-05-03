@@ -1,4 +1,4 @@
-# Hoodie.Admin
+# HoodieAdmin
 # ==============
 
 # Extends hoodie with an admin module with
@@ -6,18 +6,24 @@
 #
 
 #
-class Hoodie.Admin
+class HoodieAdmin extends Hoodie
 
-  constructor: (@hoodie) ->
-    @baseUrl = @hoodie.baseUrl.replace /\bapi\./, 'admin.api.'
+  constructor: (@baseUrl) ->
+
+    if @baseUrl
+      # remove trailing slash(es)
+      @baseUrl = @baseUrl.replace /\/+$/, ''
+
+    else 
+      @baseUrl = "/_api"
 
     # init admin submodules
-    @account = new Hoodie.AdminAccount this
-    @app     = new Hoodie.AdminApp     this
-    @users   = new Hoodie.AdminUsers   this
-    @config  = new Hoodie.AdminConfig  this
-    @logs    = new Hoodie.AdminLogs    this
-    @modules = new Hoodie.AdminModules this
+    @account = new HoodieAdmin.Account this
+    @app     = new HoodieAdmin.App     this
+    @users   = new HoodieAdmin.Users   this
+    @config  = new HoodieAdmin.Config  this
+    @logs    = new HoodieAdmin.Logs    this
+    @modules = new HoodieAdmin.Modules this
 
 
   # trigger
@@ -25,7 +31,7 @@ class Hoodie.Admin
 
   # proxies to `hoodie.trigger` with `admin` prefix
   trigger : (event, parameters...) ->
-    @hoodie.trigger "admin:#{event}", parameters...
+    super "admin:#{event}", parameters...
 
 
   # on
@@ -34,7 +40,7 @@ class Hoodie.Admin
   # proxies to `hoodie.on` with `admin` prefix
   on : (event, data) ->
     event = event.replace /(^| )([^ ]+)/g, "$1admin:$2"
-    @hoodie.on event, data
+    super event, data
 
 
   # request
@@ -64,8 +70,8 @@ class Hoodie.Admin
   open : (storeName, options = {}) ->
     $.extend options, name: storeName
 
-    options.baseUrl = @baseUrl if @baseUrl isnt @hoodie.baseUrl
-    new Hoodie.Remote @hoodie, options
+    options.baseUrl = @baseUrl if @baseUrl isnt @baseUrl
+    new Hoodie.Remote this, options
 
 
   # authenticate
@@ -91,4 +97,4 @@ class Hoodie.Admin
   signOut : () ->
     @account.signOut()
 
-Hoodie.extend 'admin', Hoodie.Admin
+Hoodie.extend 'admin', HoodieAdmin

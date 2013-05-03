@@ -1,12 +1,11 @@
-# Hoodie.AdminApp
+# HoodieAdmin.App
 # ================
 
 # provides several methods to load app wide stats
 # 
-class Hoodie.AdminApp
+class HoodieAdmin.App
 
-  constructor : (@admin) ->
-    @hoodie = @admin.hoodie
+  constructor : (@hoodie) ->
 
   # getAppInfo
   # --------------

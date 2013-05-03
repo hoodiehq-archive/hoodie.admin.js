@@ -38,16 +38,17 @@ build = ->
   # as some modules depend on others (e.g.
   # AccountRemote > Remote)
   files = """
-  src/hoodie.admin_account.coffee
-  src/hoodie.admin_app.coffee
-  src/hoodie.admin_config.coffee
-  src/hoodie.admin_logs.coffee
-  src/hoodie.admin_modules.coffee
-  src/hoodie.admin_users.coffee
-  src/hoodie.admin.coffee
+  src/hoodie_admin.coffee
+  src/hoodie_admin.account.coffee
+  src/hoodie_admin.app.coffee
+  src/hoodie_admin.config.coffee
+  src/hoodie_admin.logs.coffee
+  src/hoodie_admin.modules.coffee
+  src/hoodie_admin.users.coffee
   """.split("\n")
   
   console.log "concatinating files ..."
+  console.log files.join(" ")
   coffee = spawn 'coffee', ['-j', 'hoodie.admin.js', '-c', '-b'].concat(files)
   # coffee.on 'exit', (code) ->
   #   console.log "minifying ..."

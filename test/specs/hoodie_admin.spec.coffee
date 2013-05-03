@@ -1,11 +1,11 @@
-describe "Hoodie.Admin", ->
+describe "HoodieAdmin", ->
   beforeEach ->
-    @hoodie = new Hoodie 'http://couch.example.com'
+    @hoodieAdmin = new HoodieAdmin 'http://couch.example.com'
     spyOn($, "ajax").andReturn $.Deferred()
 
   describe "constructor", ->
     it "should have some specs", ->
-      expect('Hoodie.Admin').toBe 'tested'
+      expect('HoodieAdmin').toBe 'tested'
   # /constructor
 
 # /HoodieAdmin

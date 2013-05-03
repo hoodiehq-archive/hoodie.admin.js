@@ -1,4 +1,4 @@
-# Hoodie.AdminUsers
+# HoodieAdmin.Users
 # ================
 
 # inherits from [Hoodie.Remote](http://hoodiehq.github.com/hoodie.js/doc/hoodie/remote.html)
@@ -7,19 +7,18 @@
 # * total
 # * search
 #
-class Hoodie.AdminUsers extends Hoodie.Remote
+class HoodieAdmin.Users extends Hoodie.Remote
 
   name   : '_users'
   prefix : 'org.couchdb.user:'
 
-  constructor: (@admin) ->
-    @hoodie = @admin.hoodie
+  constructor: (@hoodie) ->
     super(@hoodie)
 
   # 
   # sign ups new user, and signs out directly after
   addTestUser: (options = {}) ->
-    hash  = "test#{hoodie.uuid(5)}"
+    hash  = "test#{@hoodie.uuid(5)}"
     email = "#{hash}@example.com" 
     @_signUpUser(hash, email)
 
@@ -40,20 +39,12 @@ class Hoodie.AdminUsers extends Hoodie.Remote
   # 
   # gets a test user. If non exists yet, one gets created
   getTestUser : ->
-    @findAll('user').then (users) =>
-      if users.length
-        # get random user
-        user = users[Math.floor(Math.random()*users.length)];
-        username = user.name.split(/\//).pop()
-        userHoodie = new Hoodie hoodie.baseUrl.replace(/\bapi\./, "#{user.ownerHash}-#{hoodie.uuid(5)}.api.")
-        userHoodie.account.signIn( username ).then -> return userHoodie
-      else
-        @addTestUser keepSignedIn : true
+    @hoodie.rejectWith(error: "deprecated")
 
 
 
   removeAllTestUsers: ->
-    @hoodie.rejectWith(error: "not yet implemented")
+    @hoodie.rejectWith(error: "deprecated")
 
 
   getTotal : ->
@@ -79,7 +70,7 @@ class Hoodie.AdminUsers extends Hoodie.Remote
       options.processData or= false
       options.data = JSON.stringify options.data
 
-    @admin.request type, path, options
+    @hoodie.request type, path, options
 
 
   # filter out non-user docs
@@ -91,7 +82,7 @@ class Hoodie.AdminUsers extends Hoodie.Remote
   # sign up user by PUTing a doc in _users
   _signUpUser : (ownerHash, username, password = '') -> 
     unless username
-      return @hoodie.defer().reject(error: 'username must be set').promise()
+      return @hoodie.rejectWith(error: 'username must be set')
 
     key = "user/#{username}"
     db  = "user/#{ownerHash}"

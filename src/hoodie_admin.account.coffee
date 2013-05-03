@@ -1,18 +1,19 @@
-# Hoodie.AdminAccount
+# HoodieAdmin.Account
 # ================
 
 #
-class Hoodie.AdminAccount extends Hoodie.Account
+class HoodieAdmin.Account extends Hoodie.Account
 
   # 
-  constructor : (@admin) ->
-    @hoodie = @admin.hoodie
-    
+  constructor : (@hoodie) ->
+
     @username = 'admin'
     @_requests = {}
 
     # hide useless methods
-    @[method] = undefined for method in [
+    noop = ->
+    @[method] = noop for method in [
+      'init'
       'signUp'
       'destroy'
       'anonymousSignUp'
@@ -20,15 +21,22 @@ class Hoodie.AdminAccount extends Hoodie.Account
       'setAnonymousPassword'
       'getAnonymousPassword'
       'removeAnonymousPassword'
+      'resetPassword'
+      '_checkPasswordResetStatus'
     ]
+
+    super
   
+  # On
+  # ---
+
   # On
   # ---
 
   # shortcut for `hoodie.admin.on`
   on : (event, cb) -> 
     event = event.replace /(^| )([^ ]+)/g, "$1account:$2"
-    @admin.on event, cb
+    @hoodie.on event, cb
 
 
   # Trigger
@@ -36,7 +44,7 @@ class Hoodie.AdminAccount extends Hoodie.Account
 
   # shortcut for `hoodie.admin.trigger`
   trigger : (event, parameters...) -> 
-    @admin.trigger "account:#{event}", parameters...
+    @hoodie.trigger "account:#{event}", parameters...
 
 
   # Request
@@ -44,7 +52,7 @@ class Hoodie.AdminAccount extends Hoodie.Account
 
   # shortcut for `hoodie.admin.request`
   request : (type, path, options = {}) ->
-    @admin.request arguments...
+    @hoodie.request arguments...
 
 
   # 
@@ -62,7 +70,7 @@ class Hoodie.AdminAccount extends Hoodie.Account
     if response.userCtx.name is 'admin'
       @_authenticated = true
       @trigger 'authenticated', @username
-      @hoodie.resolveWith @admin
+      @hoodie.resolveWith @hoodie
     else
       @_authenticated = false
       @trigger 'error:unauthenticated'
@@ -73,7 +81,7 @@ class Hoodie.AdminAccount extends Hoodie.Account
     return (response) =>
       @trigger 'signin', @username
       @trigger 'authenticated', @username
-      @hoodie.resolveWith @admin
+      @hoodie.resolveWith @hoodie
 
   #
   _userKey : ->
