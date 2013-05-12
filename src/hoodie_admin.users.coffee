@@ -77,6 +77,9 @@ class HoodieAdmin.Users extends Hoodie.Remote
   _mapDocsFromFindAll : (response) =>
     rows = response.rows.filter (row) -> /^org\.couchdb\.user:user(_anonymous)?\/[^\/]+$/.test row.id
     rows.map (row) -> row.doc
+  _handlePullResults : (changes) =>
+    changes = changes.filter (change) -> /^org\.couchdb\.user:user(_anonymous)?\/[^\/]+$/.test change.id
+    super changes
 
 
   # sign up user by PUTing a doc in _users
