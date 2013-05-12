@@ -75,7 +75,7 @@ class HoodieAdmin.Users extends Hoodie.Remote
 
   # filter out non-user docs
   _mapDocsFromFindAll : (response) =>
-    rows = response.rows.filter (row) -> /^org\.couchdb\.user:/.test row.id
+    rows = response.rows.filter (row) -> /^org\.couchdb\.user:user(_anonymous)?\/[^\/]+$/.test row.id
     rows.map (row) -> row.doc
 
 
