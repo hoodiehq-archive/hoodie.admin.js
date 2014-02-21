@@ -11,9 +11,12 @@ function hoodieAccount (hoodieAdmin) {
   var account = {};
 
   // add events API
-  hoodieEvents(hoodieAdmin, { context: account, namespace: 'account'});
+  hoodieEvents(hoodieAdmin, {
+    context: account,
+    namespace: 'account'
+  });
 
-  
+
   // sign in with password
   // ----------------------------------
 
@@ -25,7 +28,7 @@ function hoodieAccount (hoodieAdmin) {
         password: password
       }
     };
-    
+
     return hoodieAdmin.request('POST', '/_session', requestOptions)
     .done( function() {
       account.trigger('signin', ADMIN_USERNAME);
@@ -48,3 +51,4 @@ function hoodieAccount (hoodieAdmin) {
 }
 
 module.exports = hoodieAccount;
+

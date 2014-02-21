@@ -3,3 +3,4 @@ function hoodieAdminPlugin( hoodieAdmin ) {
 }
 
 module.exports = hoodieAdminPlugin;
+
