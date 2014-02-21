@@ -3,7 +3,7 @@
   "title": "hoodie.admin.js",
   "description": "Hoodie library for pocket.",
   "version": "0.2.0",
-  "main": "./dist/hoodie.admin.js",
+  "main": "./src/hoodie.admin.js",
   "homepage": "http://hood.ie",
   "repository": {
     "type": "git",
@@ -19,6 +19,10 @@
     }
   ],
   "keywords": [],
+  "dependencies": {
+    "hoodie": "^0.6.5",
+    "extend": "^1.2.1"
+  },
   "devDependencies": {
     "browserify": "~2.35.1",
     "expect.js": "~0.2.0",
@@ -47,7 +51,6 @@
     "karma-sauce-launcher": "~0.1.1",
     "karma-script-launcher": "~0.1.0",
     "load-grunt-tasks": "~0.2.1",
-    "requirejs": "~2.1.10",
     "sinon": "~1.7.1"
   },
   "scripts": {
@@ -57,9 +60,5 @@
   "browser": {
     "path": false,
     "fs": false
-  },
-  "dependencies": {
-    "hoodie": "git://github.com/hoodiehq/hoodie.js.git#utils_cleanup",
-    "extend": "~1.2.1"
   }
 }
