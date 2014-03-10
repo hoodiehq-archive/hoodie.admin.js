@@ -4,7 +4,7 @@
 // your friendly library for pocket,
 // the Hoodie Admin UI
 //
-var hoodieRequest = require('hoodie/src/utils/request');
+var hoodieRequest = require('hoodie/src/hoodie/request');
 var hoodieOpen = require('hoodie/src/hoodie/open');
 
 var hoodieAdminAccount = require('./hoodie.admin/account');

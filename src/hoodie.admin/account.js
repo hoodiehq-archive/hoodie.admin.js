@@ -2,6 +2,8 @@
 // ===================
 
 var hoodieEvents = require('hoodie/src/lib/events');
+var resolveWith = require('hoodie/src/utils/promise/resolve_with');
+var reject = require('hoodie/src/utils/promise/reject');
 
 var ADMIN_USERNAME = 'admin';
 
@@ -16,6 +18,22 @@ function hoodieAccount (hoodieAdmin) {
     context: account,
     namespace: 'account'
   });
+
+
+  // Authenticate
+  // --------------
+
+  // Use this method to assure that the admin is authenticated:
+  // `hoodieAdmin.account.authenticate().done( doSomething ).fail( handleError )`
+  // 
+  // Note that this authenticated is a much simpler imlementation then the
+  // one from `hoodie.admin.authenticate`. It sends a GET request every single
+  // time it gets called, without bundling requests or caching the state on
+  // whether the admin is authenticated or not.
+  //
+  account.authenticate = function authenticate() {
+    return hoodieAdmin.request('GET', '/_session').then(handleAuthenticateRequestSuccess);
+  };
 
 
   // sign in with password
@@ -55,6 +73,28 @@ function hoodieAccount (hoodieAdmin) {
   account.hasInValidSession = function() {
     return !!signedIn;
   };
+
+  //
+  // handle a successful authentication request.
+  //
+  // As long as there is no server error or internet connection issue,
+  // the authenticate request (GET /_session) does always return
+  // a 200 status. To differentiate whether the user is signed in or
+  // not, we check `userCtx.name` in the response. If the user is not
+  // signed in, it's null, otherwise the name the user signed in with
+  //
+  // If the user is not signed in, we difeerentiate between users that
+  // signed in with a username / password or anonymously. For anonymous
+  // users, the password is stored in local store, so we don't need
+  // to trigger an 'unauthenticated' error, but instead try to sign in.
+  //
+  function handleAuthenticateRequestSuccess(response) {
+    if (response.userCtx.name) {
+      return resolveWith(response.userCtx.name);
+    }
+
+    return reject();
+  }
 
   hoodieAdmin.account = account;
 }
