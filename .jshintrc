@@ -25,7 +25,8 @@
     "__bind",
     "__extends",
     "spyOn",
-    "Mocks"
+    "Mocks",
+    "hoodieAdmin"
   ],
   "debug": false,
   "devel": false,
