@@ -20,7 +20,7 @@
   ],
   "keywords": [],
   "dependencies": {
-    "hoodie": "^0.6.5",
+    "hoodie": "^0.7.0",
     "extend": "^1.2.1"
   },
   "devDependencies": {
