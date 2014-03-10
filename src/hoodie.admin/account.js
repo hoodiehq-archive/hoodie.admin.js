@@ -9,6 +9,7 @@ function hoodieAccount (hoodieAdmin) {
 
   // public API
   var account = {};
+  var signedIn = null;
 
   // add events API
   hoodieEvents(hoodieAdmin, {
@@ -31,6 +32,7 @@ function hoodieAccount (hoodieAdmin) {
 
     return hoodieAdmin.request('POST', '/_session', requestOptions)
     .done( function() {
+      signedIn = true;
       account.trigger('signin', ADMIN_USERNAME);
     });
   };
@@ -38,13 +40,20 @@ function hoodieAccount (hoodieAdmin) {
 
   // sign out
   // ---------
-
-  //
   account.signOut = function signOut() {
     return hoodieAdmin.request('DELETE', '/_session')
     .done( function() {
+      signedIn = false;
       return hoodieAdmin.trigger('signout');
     });
+  };
+
+  account.hasValidSession = function() {
+    return !!signedIn;
+  };
+
+  account.hasInValidSession = function() {
+    return !!signedIn;
   };
 
   hoodieAdmin.account = account;
