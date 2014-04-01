@@ -11,6 +11,7 @@ var hoodieConnection = require('hoodie/src/hoodie/connection');
 var hoodieAdminAccount = require('./hoodie.admin/account');
 var hoodieAdminPlugin = require('./hoodie.admin/plugin');
 var hoodieAdminUser = require('./hoodie.admin/user');
+var hoodieAdminId = require('./hoodie.admin/id');
 
 var hoodieEvents = require('hoodie/src/lib/events');
 
@@ -76,6 +77,9 @@ function HoodieAdmin(baseUrl) {
 
   // * hoodieAdmin.user
   hoodieAdmin.extend(hoodieAdminUser);
+
+  // * hoodieAdmin.id
+  hoodieAdmin.extend(hoodieAdminId);
 
   //
   // loading user extensions
