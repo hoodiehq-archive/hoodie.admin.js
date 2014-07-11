@@ -62,16 +62,12 @@ function hoodieAccount (hoodieAdmin) {
     return hoodieAdmin.request('DELETE', '/_session')
     .done( function() {
       signedIn = false;
-      return hoodieAdmin.trigger('signout');
+      return account.trigger('signout');
     });
   };
 
-  account.hasValidSession = function() {
-    return !!signedIn;
-  };
-
-  account.hasInValidSession = function() {
-    return !!signedIn;
+  account.isSignedIn = function() {
+    return signedIn;
   };
 
   //
@@ -83,7 +79,7 @@ function hoodieAccount (hoodieAdmin) {
   // not, we check `userCtx.name` in the response. If the user is not
   // signed in, it's null, otherwise the name the user signed in with
   //
-  // If the user is not signed in, we difeerentiate between users that
+  // If the user is not signed in, we diferentiate between users that
   // signed in with a username / password or anonymously. For anonymous
   // users, the password is stored in local store, so we don't need
   // to trigger an 'unauthenticated' error, but instead try to sign in.
@@ -92,6 +88,8 @@ function hoodieAccount (hoodieAdmin) {
     if (response.userCtx.name) {
       return resolveWith(response.userCtx.name);
     }
+
+    account.trigger('unauthenticated');
 
     return reject();
   }
