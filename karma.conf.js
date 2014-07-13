@@ -14,7 +14,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      { pattern: 'node_modules/hoodie.js-assets/jquery/jquery.js', watched: false, included: true },
+      { pattern: 'node_modules/jquery/dist/jquery.js', watched: false, included: true },
       { pattern: 'node_modules/expect.js/expect.js', watched: false, included: true },
       { pattern: 'node_modules/sinon/pkg/sinon-1.7.3.js', watched: false, included: true },
       'test/lib/helpers.js',
