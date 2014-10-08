@@ -2,7 +2,7 @@
   "name": "hoodie.admin",
   "title": "hoodie.admin.js",
   "description": "Hoodie library for pocket.",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0",
   "main": "./src/hoodie.admin.js",
   "homepage": "http://hood.ie",
   "repository": {
