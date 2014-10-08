@@ -13,6 +13,7 @@ var hoodieAdminPlugin = require('./hoodie.admin/plugin');
 var hoodieAdminUser = require('./hoodie.admin/user');
 
 var hoodieEvents = require('hoodie/src/lib/events');
+var utils = require('hoodie/src/utils');
 
 // Constructor
 // -------------
@@ -76,6 +77,10 @@ function HoodieAdmin(baseUrl) {
 
   // * hoodieAdmin.user
   hoodieAdmin.extend(hoodieAdminUser);
+
+
+  // initializations
+  hoodieAdmin.account.bearerToken = utils.config.get('_account.bearerToken');
 
   //
   // loading user extensions

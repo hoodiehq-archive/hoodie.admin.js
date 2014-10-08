@@ -4,6 +4,7 @@
 var hoodieEvents = require('hoodie/src/lib/events');
 var resolveWith = require('hoodie/src/utils/promise/resolve_with');
 var reject = require('hoodie/src/utils/promise/reject');
+var utils = require('hoodie/src/utils');
 
 var ADMIN_USERNAME = 'admin';
 
@@ -49,8 +50,10 @@ function hoodieAccount (hoodieAdmin) {
     };
 
     return hoodieAdmin.request('POST', '/_session', requestOptions)
-    .done( function() {
+    .done( function(response) {
+      var newBearerToken = response.bearerToken;
       signedIn = true;
+      setBearerToken(newBearerToken);
       account.trigger('signin', ADMIN_USERNAME);
     });
   };
@@ -62,6 +65,7 @@ function hoodieAccount (hoodieAdmin) {
     return hoodieAdmin.request('DELETE', '/_session')
     .done( function() {
       signedIn = false;
+      setBearerToken(undefined);
       return account.trigger('signout');
     });
   };
@@ -92,6 +96,15 @@ function hoodieAccount (hoodieAdmin) {
     account.trigger('unauthenticated');
 
     return reject();
+  }
+
+  function setBearerToken(newBearerToken) {
+    if (account.bearerToken === newBearerToken) {
+      return;
+    }
+
+    account.bearerToken = newBearerToken;
+    return utils.config.set('_account.bearerToken', newBearerToken);
   }
 
   hoodieAdmin.account = account;
