@@ -12,7 +12,7 @@ var hoodieAdminAccount = require('./hoodie.admin/account');
 var hoodieAdminPlugin = require('./hoodie.admin/plugin');
 var hoodieAdminUser = require('./hoodie.admin/user');
 
-var hoodieEvents = require('hoodie/src/lib/events');
+var hoodieEvents = require('hoodie/src/utils/events');
 var utils = require('hoodie/src/utils');
 
 // Constructor
@@ -36,6 +36,9 @@ function HoodieAdmin(baseUrl) {
   // remove trailing slashes
   hoodieAdmin.baseUrl = baseUrl ? baseUrl.replace(/\/+$/, '') : '';
 
+  // initializations
+  hoodieAdmin.id = function() { return 'admin'; };
+
 
   // hoodieAdmin.extend
   // ---------------
@@ -58,7 +61,7 @@ function HoodieAdmin(baseUrl) {
   // * hoodieAdmin.trigger
   // * hoodieAdmin.unbind
   // * hoodieAdmin.off
-  hoodieAdmin.extend(hoodieEvents);
+  hoodieEvents(hoodieAdmin);
 
   // * hoodieAdmin.request
   hoodieAdmin.extend(hoodieRequest);
@@ -71,16 +74,13 @@ function HoodieAdmin(baseUrl) {
 
   // * hoodieAdmin.account
   hoodieAdmin.extend(hoodieAdminAccount);
+  hoodieAdmin.account.bearerToken = utils.config.get('_account.bearerToken');
 
   // * hoodieAdmin.plugin
   hoodieAdmin.extend(hoodieAdminPlugin);
 
   // * hoodieAdmin.user
   hoodieAdmin.extend(hoodieAdminUser);
-
-
-  // initializations
-  hoodieAdmin.account.bearerToken = utils.config.get('_account.bearerToken');
 
   //
   // loading user extensions

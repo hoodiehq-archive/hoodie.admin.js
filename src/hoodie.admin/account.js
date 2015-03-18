@@ -1,7 +1,7 @@
 // HoodieAdmin Account
 // ===================
 
-var hoodieEvents = require('hoodie/src/lib/events');
+var hoodieEvents = require('hoodie/src/utils/events');
 var resolveWith = require('hoodie/src/utils/promise/resolve_with');
 var reject = require('hoodie/src/utils/promise/reject');
 var utils = require('hoodie/src/utils');
@@ -15,10 +15,11 @@ function hoodieAccount (hoodieAdmin) {
   var signedIn = null;
 
   // add events API
-  hoodieEvents(hoodieAdmin, {
-    context: account,
-    namespace: 'account'
-  });
+  hoodieEvents(
+    hoodieAdmin,
+    account,
+    'account'
+  );
 
 
   // Authenticate
