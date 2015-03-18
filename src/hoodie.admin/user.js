@@ -15,7 +15,7 @@ function hoodieAdminUser(hoodieAdmin) {
         doc.id = doc.name.split('/').pop();
         return doc;
       });
-    })
+    });
   };
 
   hoodieAdmin.user = user;
