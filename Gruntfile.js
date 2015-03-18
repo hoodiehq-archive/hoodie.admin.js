@@ -52,29 +52,6 @@ module.exports = function(grunt) {
           'dist/<%= pkg.name %>.min.js': ['<%= concat.dist.dest %>']
         }
       }
-    },
-
-    karma: {
-      options: {
-        configFile: 'karma.conf.js',
-        browsers: ['PhantomJS']
-      },
-
-      dev: {
-        browsers: ['PhantomJS']
-      }
-    },
-
-    browserify: {
-      build: {
-        src: ['src/hoodie.admin.js'],
-        dest: 'dist/hoodie.admin.js',
-        options: {
-          external: 'jquery',
-          standalone: 'HoodieAdmin',
-          debug: true
-        }
-      }
     }
   });
 
@@ -83,9 +60,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-karma');
 
-  grunt.registerTask('default', ['test']);
-  grunt.registerTask('build', ['jshint', 'test', 'browserify', 'uglify']);
-  grunt.registerTask('test', ['karma:dev']);
+  grunt.registerTask('default', ['jshint']);
 };
